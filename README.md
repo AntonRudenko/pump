@@ -1,2 +1,6 @@
 # pump
-web logger for java
+Web logger for java.
+
+In development.
+
+To add log edit logFiles.properties
