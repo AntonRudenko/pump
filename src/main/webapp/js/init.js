@@ -39,19 +39,27 @@ socket.onmessage = function(event) {
 
     switch (message.type) {
         case "LOG":
-            $("#log").append("<div>" + message.log + ": " + event.data + "</div>")
+            $log = $("#log");
+            $log.append(
+                  "<p class='logEntry'>"
+                + "<span class='logName'>$l</span> ".replace("$l", message.log)
+                + "<span class='logEntryMessage'>$e</span>".replace("$e", message.message)
+                + "</p>"
+            );
             break;
         case "LOG_LIST":
-            var controls = $("#controls");
-            controls.empty();
+            var $logList = $("#logList");
+            $logList.empty();
             message.logList.forEach(function(log) {
-                controls.append("<div>");
-                controls.append("<input type='checkbox' checked='1' id='" + log.name + "'/>");
-                controls.append(log.name);
-                controls.append("</div>");
+                $logList.append(
+                "<div>"
+                + "<input type='checkbox' checked='1' id='" + log.name + "'/>"
+                + log.name
+                + "</div>"
+                );
             });
 
-            controls.find("input:checkbox").click(function () {
+            $logList.find("input:checkbox").click(function () {
                 var $this = $(this);
                 // $this will contain a reference to the checkbox
                 if ($this.is(':checked')) {

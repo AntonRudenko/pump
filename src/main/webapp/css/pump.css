@@ -35,3 +35,19 @@ div.controls {
     width: 8%;
     height: 99%;
 }
+
+input.clearAll {
+    width: 100%;
+}
+
+p.logEntry {
+    margin: 0;
+}
+
+span.logName {
+    color: #17becf;
+}
+
+span.logEntryMessage {
+    color: #0c0;
+}
