@@ -27,6 +27,10 @@ public class TestController {
 
     @RequestMapping(value = "/test/exception", method = RequestMethod.POST)
     public void sendException() {
-        logger.error("exception", new RuntimeException("Just test exception"));
+        logger.error("exception", new RuntimeException("Just test exception", new IllegalArgumentException("illegal")));
+    }
+
+    public static void main(String[] args) {
+        throw new RuntimeException("");
     }
 }

@@ -51,3 +51,13 @@ span.logName {
 span.logEntryMessage {
     color: #0c0;
 }
+
+input.logColor {
+    width: 25px;
+    height: 25px;
+    /*border-radius: 10px;*/
+}
+
+div.exceptionBody {
+    /*padding-left: 0px;*/
+}
