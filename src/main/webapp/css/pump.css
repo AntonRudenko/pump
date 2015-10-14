@@ -61,3 +61,10 @@ input.logColor {
 div.exceptionBody {
     /*padding-left: 0px;*/
 }
+
+div.color-picker {
+    width: 15px;
+    height: 15px;
+    background-color: white;
+    display: inline-block;
+}

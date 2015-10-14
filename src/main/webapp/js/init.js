@@ -2,6 +2,7 @@ var socket = new WebSocket("ws://localhost:8080/logs");
 var logList = new LogList();
 var logAnalyser = new LogAnalyser();
 var messageIdHolder = 0;
+var defaultLogColor = "#17becf";
 
 //utility methods
 
@@ -59,7 +60,7 @@ socket.onmessage = function(event) {
                     $log.append(`
                         <div id="message${messageIdHolder}">
                             <p class='logEntry'>
-                                <span class='logName'>${message.log}</span>
+                                <span class='logName' style='color: ${logList.findLog(message.log).color}'>${message.log}</span>
                                 <span class='logEntryMessage'>${message.message}</span>
                             </p>
                         </div>
@@ -71,7 +72,7 @@ socket.onmessage = function(event) {
                     $log.append(`
                         <div id="message${messageIdHolder}">
                             <p class='logEntry'>
-                                <span class='logName mainLogName'>${message.log}</span>
+                                <span class='logName mainLogName' style='color: ${logList.findLog(message.log).color}'>${message.log}</span>
                                 <span class='logEntryMessage'>${message.message}</span>
                             </p>
                         </div>
@@ -112,7 +113,7 @@ socket.onmessage = function(event) {
 
                     $exceptionBody.append(`
                           <p class='logEntry'>
-                                <span class='logName'>| ${message.log}</span>
+                                <span class='logName' style='color: ${logList.findLog(message.log).color}'>| ${message.log}</span>
                                 <span class='logEntryMessage'>${message.message}</span>
                           </p>
                     `);
@@ -127,11 +128,25 @@ socket.onmessage = function(event) {
             message.logList.forEach(function(log) {
                 $logList.append(`
                     <div>
-                        <input type='checkbox' checked='1' id='${log.name}'/> ${log.name}
+                        <input type='checkbox' checked='1' id='${log.name}'/> <div id = "${log.name}-color-picker" class="color-picker"/>${log.name}
                     </div>
                 `);
 
-                logList.addLog(new Log(log.name))
+                var logModel = new Log(log.name, defaultLogColor);
+
+                var logColorPicker = $(`#${log.name}-color-picker`);
+                logColorPicker.css({'background-color': defaultLogColor});
+                logColorPicker.ColorPicker(
+                    {
+                        onSubmit: function(hsb, hex, rgb, el) {
+                            $(el).css({'background-color': hex});
+                            $(el).ColorPickerHide();
+                            logModel.color = hex;
+                        }
+                    }
+                );
+
+                logList.addLog(logModel)
             });
 
 

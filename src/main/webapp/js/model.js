@@ -1,11 +1,11 @@
 /**
  * Created by dark on 07.10.15.
  */
-function Log(name) {
+function Log(name, color) {
     this.name = name;
     this.enabled = true;
     this.messages = [];
-    this.color = "#17becf";
+    this.color = color;
 
     this.addMessage = function(message) {
         this.messages.push(message);
@@ -42,6 +42,10 @@ function LogList() {
             if (message.isException) return message;
         }
         return null;
+    };
+
+    this.findLog = function(logName) {
+        return findLog(logName);
     };
 
     var findLog = function(logName) {
