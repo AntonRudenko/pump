@@ -8,8 +8,14 @@ function Log(name, color) {
     this.color = color;
 
     this.addMessage = function(message) {
+        message.log = this;
         this.messages.push(message);
     }
+
+    this.clear = function() {
+        this.messages = []
+    }
+
 }
 
 function Message(id, content, level, isException) {
@@ -17,6 +23,18 @@ function Message(id, content, level, isException) {
     this.level = level;
     this.isException = isException;
     this.id = id;
+    this.dateCreated=new Date();
+    this.log = null;
+
+    this.getExceptionHeader = () => {
+        if (!isException) throw `${id} message is not exception`
+        return this.content.split('\n')[0]
+    };
+
+    this.getExceptionBody = () => {
+        if (!isException) throw `${id} message is not exception`
+        return this.content.split('\n').slice(1);
+    };
 }
 
 function LogList() {
@@ -51,6 +69,10 @@ function LogList() {
     var findLog = function(logName) {
         return logs.find(log => log.name == logName)
     };
+
+    this.clearMessages = function() {
+        logs.forEach((l) => l.clear())
+    }
 
 
 }

@@ -8,18 +8,42 @@
     <link rel="stylesheet" media="screen" type="text/css" href="js/lib/colorpicker/css/colorpicker.css" />
     <script type="text/javascript" src="js/lib/colorpicker/js/colorpicker.js"></script>
 
+    <link rel="stylesheet" type="text/css" href="js/lib/onoff/jquery.onoff.css">
+    <script src="js/lib/onoff/jquery.onoff.min.js"></script>
+
     <script src="js/model.js"></script>
     <script src="js/LogAnalyser.js"></script>
+    <script src="js/LogRenderer.js"></script>
+    <script src="js/Filter.js"></script>
     <script src="js/init.js"></script>
     <script src="js/viewInit.js"></script>
     <link href="css/pump.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="img/favicon.png" />
 
 </head>
 <body class="body-color">
     <div id="main" class="main">
         <div id="controls" class="controls border" >
             <div>
-                <input id="clearAll" type="button" value="Clear all" class="clearAll"/>
+                <div class="control-element-group">
+                    <input id="clearAll" type="button" value="Clear all" class="clearAll jq-clearAll"/><input id="rerender" type="button" value="Rerender" class="rerender jq-rerender"/>
+                </div>
+                <div class="control-element-group">
+                    <input type="text" value="Filter" class="filter-text jq-filter-text"><input type="button" value="Filter" class="filter-button jq-filter-button">
+                </div>
+                <div class="control-element-group">
+                    <select class="filter-level-select jq-filter-level-select">
+                        <option>FINEST</option>
+                        <option>FINER</option>
+                        <option>FINE</option>
+                        <option>CONFIG</option>
+                        <option>INFO</option>
+                        <option>WARNING</option>
+                        <option>SEVERE</option>
+                        <option>ERROR</option>
+                    </select><input type="button" value="▲" class="filter-level-button jq-filter-level-button-up"><input type="button" value="▼" class="filter-level-button jq-filter-level-button-down">
+                </div>
+
             </div>
             <div id="logList">
             </div>

@@ -1,5 +1,6 @@
 var socket = new WebSocket("ws://localhost:8080/logs");
 var logList = new LogList();
+var logRenderer = new LogRenderer(logList);
 var logAnalyser = new LogAnalyser();
 var messageIdHolder = 0;
 var defaultLogColor = "#17becf";
@@ -11,6 +12,8 @@ var getMessageType = function(str) {
     if (logAnalyser.isExceptionBody(str)) return MessageTypes.EXCEPTION_BODY;
     return MessageTypes.COMMON;
 };
+
+var LOG_LEVEL = ['FINEST', 'FINER', 'FINE', 'CONFIG', 'INFO', 'WARNING', 'SEVERE', 'ERROR'];
 
 //utility methods
 
@@ -53,81 +56,14 @@ socket.onmessage = function(event) {
 
     switch (message.type) {
         case "LOG":
-            messageIdHolder++;
-            var messageType = getMessageType(message.message);
-            switch (messageType) {
-                case MessageTypes.COMMON:
-                    $log.append(`
-                        <div id="message${messageIdHolder}">
-                            <p class='logEntry'>
-                                <span class='logName' style='color: ${logList.findLog(message.log).color}'>${message.log}</span>
-                                <span class='logEntryMessage'>${message.message}</span>
-                            </p>
-                        </div>
-                    `);
-                    logList.addMessage(message.log, new Message(messageIdHolder, message.message, logAnalyser.getLevel(message.message), false));
-                    // just create new message and append it
-                    break;
-                case MessageTypes.EXCEPTION:
-                    $log.append(`
-                        <div id="message${messageIdHolder}">
-                            <p class='logEntry'>
-                                <span class='logName mainLogName' style='color: ${logList.findLog(message.log).color}'>${message.log}</span>
-                                <span class='logEntryMessage'>${message.message}</span>
-                            </p>
-                        </div>
-                    `);
-                    logList.addMessage(message.log, new Message(messageIdHolder, message.message, logAnalyser.getLevel(message.message), true));
-                    // create new message and append it:
-                    break;
-                case MessageTypes.EXCEPTION_BODY:
-                    // find last exception and append string to it;
-                    var exception = logList.findLastException(message.log);
-                    if (exception == null) throw "Can't find exception";
-                    exception.content += "\n";
-                    exception.content += message.message;
-
-                    var $exceptionBody = $(`#message${exception.id}`).find(`.exceptionBody`);
-                    if ($exceptionBody.size() == 0) {
-                        var $exception = $(`#message${exception.id}`);
-
-                        var $mainLogName = $exception.find('.mainLogName');
-
-                        $exception.append(`<div class="exceptionBody"></div>`)
-                        var $exceptionBody = $(`#message${exception.id}`).find(`.exceptionBody`)
-
-                        // hide exception under hood
-                        $exceptionBody.slideToggle('fast');
-                        $mainLogName.css({'text-decoration': 'underline'})
-
-                        $exception.click(function(){
-                            if (!$exceptionBody.is(":visible")) {
-                                $mainLogName.css({'text-decoration': 'none'})
-                            } else {
-                                $mainLogName.css({'text-decoration': 'underline'})
-                            }
-                            $exceptionBody.slideToggle('fast', () => $("#log").getNiceScroll().resize());
-                        })
-
-                    }
-
-                    $exceptionBody.append(`
-                          <p class='logEntry'>
-                                <span class='logName' style='color: ${logList.findLog(message.log).color}'>| ${message.log}</span>
-                                <span class='logEntryMessage'>${message.message}</span>
-                          </p>
-                    `);
-                    break;
-                default:
-                    console.error("unknown message type " + messageType);
-            }
+            logRenderer.addMessage(message)
             break;
         case "LOG_LIST":
             var $logList = $("#logList");
             $logList.empty();
             message.logList.forEach(function(log) {
                 $logList.append(`
-                    <div>
+                    <div class="logSelect">
                         <input type='checkbox' checked='1' id='${log.name}'/> <div id = "${log.name}-color-picker" class="color-picker"/>${log.name}
                     </div>
                 `);
@@ -149,8 +85,8 @@ socket.onmessage = function(event) {
                 logList.addLog(logModel)
             });
 
-
-            $logList.find("input:checkbox").click(function () {
+            var $logCheckbox = $logList.find("input:checkbox")
+            $logCheckbox.click(function () {
                 var $this = $(this);
                 // $this will contain a reference to the checkbox
                 var log = $this.attr("id")
@@ -159,17 +95,20 @@ socket.onmessage = function(event) {
                         type: 'ENABLE_LOG',
                         log: log
                     };
-                    findLog(log).enabled = true;
+                    logList.findLog(log).enabled = true;
                     socket.send(JSON.stringify(enableLogMessage));
                 } else {
                     var disableLogMessage = {
                         type: 'DISABLE_LOG',
                         log: log
                     };
-                    findLog(log).enabled = false;
+                    logList.findLog(log).enabled = false;
                     socket.send(JSON.stringify(disableLogMessage));
                 }
-            });
+            })
+
+            //$logCheckbox.onoff()
+
             break;
         default:
             console.error("unknown message type " + message.type);

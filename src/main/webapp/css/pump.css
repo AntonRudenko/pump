@@ -37,7 +37,13 @@ div.controls {
 }
 
 input.clearAll {
-    width: 100%;
+    position: relative;
+    width: 50%;
+}
+
+input.rerender {
+    position: absolute;
+    width: 50%;
 }
 
 p.logEntry {
@@ -67,4 +73,33 @@ div.color-picker {
     height: 15px;
     background-color: white;
     display: inline-block;
+}
+
+div.control-element-group {
+    width: 100%;
+    height: 23px;
+    /*position: relative;*/
+}
+
+input.filter-text {
+    width: 70%;
+    position: relative;
+}
+
+input.filter-button {
+    width: 30%;
+    position: absolute;
+}
+
+select.filter-level-select {
+    width: 90px;
+    height: 21px;
+    position: relative;
+}
+
+input.filter-level-button {
+    width: 20.4%;
+}
+
+div.logSelect {
 }
